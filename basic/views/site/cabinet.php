@@ -2,11 +2,10 @@
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
-/* @var $model app\models\ContactForm */
+/* @var $transfersDataProvider yii\data\ActiveDataProvider */
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-use yii\captcha\Captcha;
+use yii\data\ActiveDataProvider;
 
 $this->title = 'Cabinet';
 $this->params['breadcrumbs'][] = $this->title;
@@ -27,7 +26,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row">
             <div class="col-lg-5">
-
+                <?= \yii\grid\GridView::widget([
+                    'dataProvider' => $transfersDataProvider,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+                    ],
+                ]); ?>
 
             </div>
         </div>

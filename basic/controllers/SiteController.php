@@ -111,14 +111,20 @@ class SiteController extends Controller
      */
     public function actionCabinet()
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => Transfer::find(),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+//        $model = new ContactForm();
+//        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+//            Yii::$app->session->setFlash('contactFormSubmitted');
+//
+//            return $this->refresh();
+//        }
         return $this->render('cabinet', [
-            'model' => $model,
+            'transfersDataProvider' => $dataProvider,
         ]);
     }
 }
