@@ -4,11 +4,13 @@
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $transfersDataProvider yii\data\ActiveDataProvider */
 /* @var $transferForm \app\models\TransferForm */
+/* @var $user \app\models\User */
 
 use yii\helpers\Html;
 use yii\data\ActiveDataProvider;
+use yii\bootstrap\ActiveForm;
 
-$this->title = 'Cabinet';
+$this->title = $user->username.' Cabinet';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-contact">
@@ -21,6 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     <?php else: ?>
 
+        <p>Your balance: <h2><?=$user->balance?></h2></p>
+
         <p>
             There you can transfer your credits.
         </p>
@@ -30,13 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'id' => 'transfer-form',
                     'layout' => 'horizontal',
                     'fieldConfig' => [
-                        'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
+                        'template' => "<div class=\"col-lg-2\">{label}</div><div class=\"col-lg-3\">{input}</div> <div class=\"col-lg-7\">{error}</div>",
                         'labelOptions' => ['class' => 'col-lg-1 control-label'],
                     ],
                 ]); ?>
 
                 <?= $form->field($transferForm, 'recipient')->textInput(['autofocus' => true]) ?>
-                <?= $form->field($transferForm, 'summ')->textInput(['autofocus' => true]) ?>
+                <?= $form->field($transferForm, 'summ')->textInput() ?>
 
                 <div class="form-group">
                     <div class="col-lg-offset-1 col-lg-11">
@@ -52,7 +56,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= \yii\grid\GridView::widget([
                     'dataProvider' => $transfersDataProvider,
                     'columns'=> [
-                        'sender', 'recipient', 'summ', 'transferDate'
+                        [
+                            'attribute' => 'sender',
+                            'value' => 'sender.username'
+                        ],
+                        [
+                            'attribute' => 'recipient',
+                            'value' => 'recipient.username'
+                        ],
+                        'summ', 'transferDate'
                     ],
                     'layout' => "{pager}\n{summary}\n{items}\n{pager}",
                     'summary' => 'Показано {count} из {totalCount}',

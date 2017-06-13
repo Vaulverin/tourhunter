@@ -115,15 +115,14 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function getTransfers()
     {
-        return $this->hasMany(Transfer::className(), ['recipient' => 'id']);
+        return $this->hasMany(Transfer::className(), ['sender_id' => 'id']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTransfers0()
+    /** @var User Current User */
+    private static $_current;
+    public static function current()
     {
-        return $this->hasMany(Transfer::className(), ['sender' => 'id']);
+        return User::$_current ?? User::$_current = User::findOne(\Yii::$app->user->id);
     }
 
 }

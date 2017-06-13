@@ -19,21 +19,44 @@ class TransferForm extends Model
     public function rules()
     {
         return [
-            // username and password are both required
-            [['username', 'summ'], 'required'],
-            // rememberMe must be a boolean value
-            ['summ', 'float'],
+            ['recipient', 'required', 'message'=> 'Recipient required'],
+            ['recipient', 'trim'],
+            ['recipient', function($attribute, $params)
+            {
+                if ($this->$attribute == User::current()->username){
+                    $this->addError($attribute, "You can't transfer credits to yourself!");
+                }
+            }],
+            ['summ', 'required', 'message'=> 'Summ required'],
+            ['summ', 'double'],
+            ['summ', 'compare', 'compareValue'=> 0, 'operator'=> '>', 'type' => 'double'],
+            ['summ', function($attribute, $params) {
+                if (strlen(substr(strrchr($this->$attribute , "."), 1)) > 2){
+                    $this->addError($attribute, "Too much digits after point!");
+                }
+            }]
         ];
     }
 
     public function transfer()
     {
-        $transfer = new Transfer();
-        $transfer->sender = Yii::$app->user->id;
-        $transfer->recipient = $this->getUser()->id;
-        $transfer->summ = $this->summ;
-        $transfer->save();
-        return true;
+        if ($this->validate()) {
+            $recipient = $this->getRecipient();
+            $currentUser = User::current();
+            $transfer = new Transfer();
+            $transfer->sender_id = $currentUser->id;
+            $transfer->recipient_id = $recipient->id;
+            $transfer->summ = $this->summ;
+            if ($transfer->save()) {
+                $recipient->balance += $this->summ;
+                $recipient->save();
+                $currentUser->balance -= $this->summ;
+                $currentUser->save();
+                return true;
+            }
+            $this->addError('error', 'Some errors occur while transferring credits');
+        }
+        return false;
     }
 
     /**
@@ -41,7 +64,7 @@ class TransferForm extends Model
      *
      * @return User|null
      */
-    public function getUser()
+    public function getRecipient()
     {
         if ($this->_user === false) {
             $this->_user = User::findByUsername($this->recipient);

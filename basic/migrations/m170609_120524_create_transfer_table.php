@@ -18,8 +18,8 @@ class m170609_120524_create_transfer_table extends Migration
     {
         $this->createTable('transfer', [
             'id' => $this->primaryKey(),
-            'sender' => $this->integer()->notNull(),
-            'recipient' => $this->integer()->notNull(),
+            'sender_id' => $this->integer()->notNull(),
+            'recipient_id' => $this->integer()->notNull(),
             'summ' => $this->float()->notNull(),
             'transferDate' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
@@ -28,14 +28,14 @@ class m170609_120524_create_transfer_table extends Migration
         $this->createIndex(
             'idx-transfer-sender',
             'transfer',
-            'sender'
+            'sender_id'
         );
 
         // add foreign key for table `user`
         $this->addForeignKey(
             'fk-transfer-sender',
             'transfer',
-            'sender',
+            'sender_id',
             'user',
             'id'
         );
@@ -44,14 +44,14 @@ class m170609_120524_create_transfer_table extends Migration
         $this->createIndex(
             'idx-transfer-recipient',
             'transfer',
-            'recipient'
+            'recipient_id'
         );
 
         // add foreign key for table `user`
         $this->addForeignKey(
             'fk-transfer-recipient',
             'transfer',
-            'recipient',
+            'recipient_id',
             'user',
             'id'
         );
