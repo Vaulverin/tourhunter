@@ -13,40 +13,24 @@ class LoginFormTest extends \Codeception\Test\Unit
     {
         \Yii::$app->user->logout();
     }
-
-    public function testLoginNoUser()
+    protected $username;
+    public function testLogin()
     {
+        $this->username = uniqid();
         $this->model = new LoginForm([
-            'username' => 'not_existing_username',
-            'password' => 'not_existing_password',
+            'username' => $this->username,
         ]);
-
-        expect_not($this->model->login());
-        expect_that(\Yii::$app->user->isGuest);
-    }
-
-    public function testLoginWrongPassword()
-    {
-        $this->model = new LoginForm([
-            'username' => 'demo',
-            'password' => 'wrong_password',
-        ]);
-
-        expect_not($this->model->login());
-        expect_that(\Yii::$app->user->isGuest);
-        expect($this->model->errors)->hasKey('password');
-    }
-
-    public function testLoginCorrect()
-    {
-        $this->model = new LoginForm([
-            'username' => 'demo',
-            'password' => 'demo',
-        ]);
-
         expect_that($this->model->login());
         expect_not(\Yii::$app->user->isGuest);
-        expect($this->model->errors)->hasntKey('password');
+        $this->_after();
+
+        $this->model = new LoginForm([
+            'username' => $this->username,
+        ]);
+        codecept_debug($this->model);
+        codecept_debug($this->username);
+        expect_that($this->model->login());
+        expect_not(\Yii::$app->user->isGuest);
     }
 
 }

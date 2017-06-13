@@ -28,7 +28,7 @@ class TransferForm extends Model
                 }
             }],
             ['summ', 'required', 'message'=> 'Summ required'],
-            ['summ', 'double'],
+            ['summ', 'double', 'max'=> 10000000],
             ['summ', 'compare', 'compareValue'=> 0, 'operator'=> '>', 'type' => 'double'],
             ['summ', function($attribute, $params) {
                 if (strlen(substr(strrchr($this->$attribute , "."), 1)) > 2){
